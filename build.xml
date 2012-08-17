@@ -585,7 +585,7 @@ No need to run `init` here. This target should only be called from parent
           depends="setup-phing-drush">
     <!-- Get a list of modules and themes matching the project prefix.
          These are the ones we are going to review. -->
-    <drush command="phing-list-modules" returnProperty="projects" />
+    <drush command="phing-list-modules" root="${project.drupal.dir}" returnProperty="projects" />
     <!-- The project list is piped through a file as this seems to be
          the only way to handle filtering of values in Phing. -->
     <delete file="${project.logdir}/projects.txt" />
@@ -683,7 +683,7 @@ Execution of this target can be skipped by setting the
       <then>
 
         <!-- Get a list of all available test cases -->
-        <drush command="phing-list-tests" returnProperty="tests" />
+        <drush command="phing-list-tests" root="${project.drupal.dir}" returnProperty="tests" />
 
         <!-- The list of tests groups is piped through a file as this seems
              to be the only way to handle filtering of values in Phing. -->
