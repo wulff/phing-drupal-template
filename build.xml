@@ -585,40 +585,22 @@ No need to run `init` here. This target should only be called from parent
           depends="setup-phing-drush">
     <!-- Get a list of modules and themes matching the project prefix.
          These are the ones we are going to review. -->
-    <drush command="pm-list" pipe="true" returnProperty="projects" />
+    <drush command="phing-list-modules" returnProperty="projects" />
     <!-- The project list is piped through a file as this seems to be
          the only way to handle filtering of values in Phing. -->
     <delete file="${project.logdir}/projects.txt" />
     <append text="${projects}" destFile="${project.logdir}/projects.txt" />
 
-    <!-- Build a regular expression to match modules based on the
-         set properties. The propery can contain prefixes separated by comma
-         and/or spaces. The expression should be in the format
-         `^(prefix1|prefix2|prefix3)_`. -->
-    <php expression="'^(' . preg_replace('/(\s+|\s*,\s*)/', '|', '${project.code.prefix}') .')_'"
-         returnProperty="project.code.prefix.regex"/>
-
     <loadfile property="project.code.projects"
               file="${project.logdir}/projects.txt">
       <filterchain>
-        <linecontainsregexp>
-          <regexp pattern="${project.code.prefix.regex}" />
-        </linecontainsregexp>
-        <!-- Prefix all lines with a space.
-             We need the space as separator when we strip line breaks -->
         <prefixlines prefix=" " />
         <striplinebreaks />
       </filterchain>
     </loadfile>
 
-    <!-- Cleanup the custom code property. Commas and multiple whitespace
-         characters are reduced to a single space. -->
-    <php expression="preg_replace('/(\s+|\s*,\s*)/', ' ', '${project.code.custom}')"
-         returnProperty="project.code.custom"/>
-
     <delete file="${project.logdir}/projects.filtered.txt" />
     <append text="${project.code.projects}" destFile="${project.logdir}/projects.filtered.txt" />
-    <append text="${project.code.custom}" destFile="${project.logdir}/projects.filtered.txt" />
 
     <!-- Execute coder review and output results in XML format-->
     <drush command="${coder.review.command}" assume="yes"
@@ -627,10 +609,8 @@ No need to run `init` here. This target should only be called from parent
       <param>checkstyle</param>
       <param>minor</param>
       <param>${coder.review.type}</param>
-      <!-- Review all the modules and themes matching the project prefix -->
+      <!-- Review all custom modules and themes -->
       <param>${project.code.projects}</param>
-      <!-- Review additional modules which do not match the prefix -->
-      <param>${project.code.custom}</param>
     </drush>
 
     <!-- Write XML output to file -->
@@ -1041,6 +1021,7 @@ called from `init` target. -->
          here. -->
     <patternset id="contrib">
       <exclude name="**/contrib/**/*.*" />
+      <exclude name="**/development/**/*.*" />
       <exclude name="**/libraries/**/*.*" />
     </patternset>
 
