@@ -1108,6 +1108,9 @@ Configuration of which installation profile and database to use in done in
   <target name="site-install"
           depends="init, setup-phing-drush"
           unless="project.installed">
+    <pdosqlexec url="mysql:host=localhost" userId="root" password="" onerror="abort">
+      DROP DATABASE IF EXISTS temp_phing_drupal_jenkins;
+    </pdosqlexec>
     <drush command="site-install" assume="yes">
       <option name="db-url">${drupal.db.url}</option>
       <param>${drupal.profile}</param>
