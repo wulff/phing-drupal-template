@@ -140,17 +140,28 @@ complies with coding standards. -->
                                   phploc,
                                   phpmd,
                                   phpcpd">
-    <!-- Moved inside target to support properties in target name -->
-    <phingcall target="coder-review-d${drupal.version}">
-      <!-- Run the target as if it was executed from the Drupal root
-           directory. -->
-      <property name="project.basedir" value="${project.drupal.dir}"/>
-      <!-- We already have a clean environment so avoid further cleaning. -->
-      <property name="project.cleaned" value="1"/>
-      <!-- Make will run again as a part of the `init` target. We already have
-           a working site so skip that. -->
-      <property name="project.make.skip" value="1"/>
-    </phingcall>
+    <if>
+      <and>
+        <isset property="phpcs.drupalcs.enable"/>
+        <istrue value="${phpcs.drupalcs.enable}"/>
+      </and>
+      <then>
+        <phingcall target="phpcs"></phingcall>
+      </then>
+      <else>
+        <!-- Moved inside target to support properties in target name -->
+        <phingcall target="coder-review-d${drupal.version}">
+          <!-- Run the target as if it was executed from the Drupal root
+               directory. -->
+          <property name="project.basedir" value="${project.drupal.dir}"/>
+          <!-- We already have a clean environment so avoid further cleaning. -->
+          <property name="project.cleaned" value="1"/>
+          <!-- Make will run again as a part of the `init` target. We already have
+               a working site so skip that. -->
+          <property name="project.make.skip" value="1"/>
+        </phingcall>
+      </else>
+    </if>
   </target>
 
 <!-- ### Generate documentation
@@ -656,9 +667,9 @@ Consequently `coder-review-d6/7` and not `phpcs` is used for the main targets.
            It's coming for v2.5. Execute while we wait. -->
       <exec command="phpcs --report=checkstyle
                     --report-file=${project.logdir}/checkstyle-codesniffer.xml
-                    --standard=${project.toolsdir}/drupalcs/ruleset.xml
+                    --standard=${project.toolsdir}/drupalcs/Drupal/ruleset.xml
                     --extensions=php,inc
-                    --ignore=*/contrib/*,*/*.features.*,*/*.field_group.inc,*/*.layout.*,*/*.pages_default.*,*/*.panels_default.*,*/*strongarm.inc,*/*.views_default.inc
+                    --ignore=*/contrib/*,*/development/*,*/*.features.*,*/*.field_group.inc,*/*.layout.*,*/*.pages_default.*,*/*.panelizer.*,*/*.panels_default.*,*/*strongarm.inc,*/*.views_default.inc
                     ${project.sitesdir}"
             logoutput="true" />
     </target>
