@@ -668,8 +668,8 @@ Consequently `coder-review-d6/7` and not `phpcs` is used for the main targets.
       <exec command="phpcs --report=checkstyle
                     --report-file=${project.logdir}/checkstyle-codesniffer.xml
                     --standard=${project.toolsdir}/drupalcs/Drupal/ruleset.xml
-                    --extensions=php,inc
-                    --ignore=*/contrib/*,*/development/*,*/*.features.*,*/*.field_group.inc,*/*.layout.*,*/*.pages_default.*,*/*.panelizer.*,*/*.panels_default.*,*/*strongarm.inc,*/*.views_default.inc
+                    --extensions=php,module,install,inc,profile,test
+                    --ignore=*contrib/*,*development/*,*libraries/*,*/*.features.*,*/*.field_group.*,*/*.layout.*,*/*.pages_default.*,*/*.panelizer.*,*/*.panels_default.*,*/*.strongarm.*,*/*.views_default.*
                     ${project.sitesdir}"
             logoutput="true" />
     </target>
